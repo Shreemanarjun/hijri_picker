@@ -9,7 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hijri: ^3.0.0
+  hijri_calendar:
+    git:
+      url: https://github.com/Shreemanarjun/hijri_calendar
+      # Optionally specify a specific branch, commit, or tag
+      ref: main  # or specific branch name
+
 
 dev_dependencies:
   flutter_driver:
@@ -20,7 +25,7 @@ dev_dependencies:
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
 # The following section is specific to Flutter.
-flutter:
+# flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:

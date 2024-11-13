@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:hijri_calendar/hijri_calendar.dart';
 import 'package:hijri_picker/hijri_picker.dart';
 
 void main() => runApp(MyApp());
@@ -18,14 +18,12 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: [
-          //     const Locale('en', 'USA'),
-          const Locale('ar', 'SA'),
+          const Locale('en', 'USA'),
+          const Locale('en', 'US'),
         ],
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: Colors.brown,
-          brightness: Brightness.light
-        ),
+        theme:
+            ThemeData(primaryColor: Colors.brown, brightness: Brightness.light),
         home: MyHomePage(title: "Umm Alqura Calendar"));
   }
 }
@@ -40,11 +38,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedDate = HijriCalendar.now();
+  var selectedDate = HijriCalendarConfig.fromHijri(1446, 01, 01);
 
   @override
   Widget build(BuildContext context) {
-    HijriCalendar.setLocal(Localizations.localeOf(context).languageCode);
+    HijriCalendarConfig.setLocal(Localizations.localeOf(context).languageCode);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -57,11 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
             //   crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                '${selectedDate.toString()}',
+                'Gregorian: ${selectedDate.hijriToGregorian(selectedDate.hYear, selectedDate.hMonth, selectedDate.hDay).toLocal()}',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               Text(
-                '${selectedDate.fullDate()}',
+                'Hijri: ${selectedDate.fullDate()}',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ],
@@ -77,19 +75,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Null> _selectDate(BuildContext context) async {
-    final HijriCalendar? picked = await showHijriDatePicker(
+    final HijriCalendarConfig? picked = await showHijriDatePicker(
       context: context,
       initialDate: selectedDate,
-      lastDate: HijriCalendar()
-        ..hYear = 1445
-        ..hMonth = 9
-        ..hDay = 25,
-      firstDate: HijriCalendar()
-        ..hYear = 1438
-        ..hMonth = 12
-        ..hDay = 25,
+      lastDate: HijriCalendarConfig.fromHijri(1460, 09, 25),
+      firstDate: HijriCalendarConfig.fromHijri(1448, 12, 25),
       initialDatePickerMode: DatePickerMode.day,
     );
+    print("$picked here");
     if (picked != null)
       setState(() {
         selectedDate = picked;

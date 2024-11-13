@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:hijri_calendar/hijri_calendar.dart';
 
 class HijriCalendarBuilders {
   const HijriCalendarBuilders({
@@ -12,5 +12,5 @@ class HijriCalendarBuilders {
 
   /// Days builder (1, 2, ..)
   final Widget Function(
-      BuildContext context, HijriCalendar day, bool isSelected)? dayBuilder;
+      BuildContext context, HijriCalendarConfig day, bool isSelected)? dayBuilder;
 }

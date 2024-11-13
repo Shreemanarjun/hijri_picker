@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:hijri_calendar/hijri_calendar.dart';
 
 import 'package:hijri_picker/src/hijri_calendar_builders.dart';
 
@@ -29,7 +29,7 @@ const Duration _kMonthScrollDuration = const Duration(milliseconds: 200);
 /// Signature for predicating dates for enabled date selections.
 ///
 /// See [showDatePicker].
-typedef bool SelectableDayPredicate(HijriCalendar day);
+typedef bool SelectableDayPredicate(HijriCalendarConfig day);
 
 class HijriDatePickerDialog extends StatefulWidget {
   const HijriDatePickerDialog({
@@ -41,9 +41,9 @@ class HijriDatePickerDialog extends StatefulWidget {
     required this.initialDatePickerMode,
   }) : super(key: key);
 
-  final HijriCalendar initialDate;
-  final HijriCalendar firstDate;
-  final HijriCalendar lastDate;
+  final HijriCalendarConfig initialDate;
+  final HijriCalendarConfig firstDate;
+  final HijriCalendarConfig lastDate;
   final SelectableDayPredicate? selectableDayPredicate;
   final DatePickerMode initialDatePickerMode;
 
@@ -78,7 +78,7 @@ class _DatePickerDialogState extends State<HijriDatePickerDialog> {
     }
   }
 
-  late HijriCalendar _selectedDate;
+  late HijriCalendarConfig _selectedDate;
   late DatePickerMode _mode;
   final GlobalKey _pickerKey = GlobalKey();
 
@@ -111,7 +111,7 @@ class _DatePickerDialogState extends State<HijriDatePickerDialog> {
     });
   }
 
-  void _handleYearChanged(HijriCalendar value) {
+  void _handleYearChanged(HijriCalendarConfig value) {
     _vibrate();
     setState(() {
       _mode = DatePickerMode.day;
@@ -119,7 +119,7 @@ class _DatePickerDialogState extends State<HijriDatePickerDialog> {
     });
   }
 
-  void _handleDayChanged(HijriCalendar value) {
+  void _handleDayChanged(HijriCalendarConfig value) {
     _vibrate();
     setState(() {
       _selectedDate = value;
@@ -159,7 +159,7 @@ class _DatePickerDialogState extends State<HijriDatePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    HijriCalendar.setLocal(Localizations.localeOf(context).languageCode);
+    HijriCalendarConfig.setLocal(Localizations.localeOf(context).languageCode);
 
     final Widget picker = Flexible(
       child: SizedBox(
@@ -257,7 +257,7 @@ class _DatePickerHeader extends StatelessWidget {
     required this.orientation,
   }) : super(key: key);
 
-  final HijriCalendar hSelectedDate;
+  final HijriCalendarConfig hSelectedDate;
   final DatePickerMode mode;
   final ValueChanged<DatePickerMode> onModeChanged;
   final Orientation orientation;
@@ -418,16 +418,16 @@ class HijriMonthPicker extends StatefulWidget {
   /// The currently selected date.
   ///
   /// This date is highlighted in the picker.
-  final HijriCalendar selectedDate;
+  final HijriCalendarConfig selectedDate;
 
   /// Called when the user picks a month.
-  final ValueChanged<HijriCalendar> onChanged;
+  final ValueChanged<HijriCalendarConfig> onChanged;
 
   /// The earliest date the user is permitted to pick.
-  final HijriCalendar firstDate;
+  final HijriCalendarConfig firstDate;
 
   /// The latest date the user is permitted to pick.
-  final HijriCalendar lastDate;
+  final HijriCalendarConfig lastDate;
 
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
@@ -471,14 +471,14 @@ class _HijriMonthPickerState extends State<HijriMonthPicker> {
     textDirection = Directionality.of(context);
   }
 
-  late HijriCalendar _todayDate;
-  late HijriCalendar _currentDisplayedMonthDate;
+  late HijriCalendarConfig _todayDate;
+  late HijriCalendarConfig _currentDisplayedMonthDate;
   Timer? _timer;
   PageController? _dayPickerController;
 
   void _updateCurrentDate() {
-    _todayDate = HijriCalendar.now();
-    final HijriCalendar tomorrow = HijriCalendar()
+    _todayDate = HijriCalendarConfig.now();
+    final HijriCalendarConfig tomorrow = HijriCalendarConfig()
       ..hYear = _todayDate.hYear
       ..hMonth = _todayDate.hMonth
       ..hDay = _todayDate.hDay + 1;
@@ -498,16 +498,17 @@ class _HijriMonthPickerState extends State<HijriMonthPicker> {
     });
   }
 
-  static int _monthDelta(HijriCalendar startDate, HijriCalendar endDate) {
+  static int _monthDelta(
+      HijriCalendarConfig startDate, HijriCalendarConfig endDate) {
     return (endDate.hYear - startDate.hYear) * 12 +
         endDate.hMonth -
         startDate.hMonth;
   }
 
   /// Add months to a month truncated date.
-  HijriCalendar _addMonthsToMonthDate(
-      HijriCalendar monthDate, int monthsToAdd) {
-    var x = HijriCalendar.addMonth(
+  HijriCalendarConfig _addMonthsToMonthDate(
+      HijriCalendarConfig monthDate, int monthsToAdd) {
+    var x = HijriCalendarConfig.bridgeAddMonth(
         monthDate.hYear + (monthDate.hMonth + monthsToAdd) ~/ 12,
         monthDate.hMonth + monthsToAdd % 12);
     return x;
@@ -516,7 +517,7 @@ class _HijriMonthPickerState extends State<HijriMonthPicker> {
   Widget _buildItems(BuildContext context, int index) {
     final month = _addMonthsToMonthDate(widget.firstDate, index);
     return HijriDayPicker(
-      key: ValueKey<HijriCalendar>(month),
+      key: ValueKey<HijriCalendarConfig>(month),
       selectedDate: widget.selectedDate,
       currentDate: _todayDate,
       onChanged: widget.onChanged,
@@ -558,8 +559,8 @@ class _HijriMonthPickerState extends State<HijriMonthPicker> {
         widget.lastDate.hYear, widget.lastDate.hMonth, widget.lastDate.hDay);
   }
 
-  late HijriCalendar _previousMonthDate;
-  late HijriCalendar _nextMonthDate;
+  late HijriCalendarConfig _previousMonthDate;
+  late HijriCalendarConfig _nextMonthDate;
 
   void _handleMonthPageChanged(int monthPage) {
     setState(() {
@@ -581,7 +582,7 @@ class _HijriMonthPickerState extends State<HijriMonthPicker> {
           Semantics(
             sortKey: _MonthPickerSortKey.calendar,
             child: PageView.builder(
-              key: ValueKey<HijriCalendar>(widget.selectedDate),
+              key: ValueKey<HijriCalendarConfig>(widget.selectedDate),
               controller: _dayPickerController,
               scrollDirection: Axis.horizontal,
               itemCount: _monthDelta(widget.firstDate, widget.lastDate) + 1,
@@ -705,22 +706,22 @@ class HijriDayPicker extends StatelessWidget {
   /// The currently selected date.
   ///
   /// This date is highlighted in the picker.
-  final HijriCalendar selectedDate;
+  final HijriCalendarConfig selectedDate;
 
   /// The current date at the time the picker is displayed.
-  final HijriCalendar currentDate;
+  final HijriCalendarConfig currentDate;
 
   /// Called when the user picks a day.
-  final ValueChanged<HijriCalendar> onChanged;
+  final ValueChanged<HijriCalendarConfig> onChanged;
 
   /// The earliest date the user is permitted to pick.
-  final HijriCalendar firstDate;
+  final HijriCalendarConfig firstDate;
 
   /// The latest date the user is permitted to pick.
-  final HijriCalendar lastDate;
+  final HijriCalendarConfig lastDate;
 
   /// The month whose days are displayed by this picker.
-  final HijriCalendar displayedMonth;
+  final HijriCalendarConfig displayedMonth;
 
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
@@ -756,11 +757,11 @@ class HijriDayPicker extends StatelessWidget {
   /// This applies the leap year logic introduced by the Gregorian reforms of
   /// 1582. It will not give valid results for dates prior to that time.
   static int getDaysInMonth(int year, int month) {
-    return HijriCalendar().getDaysInMonth(year, month);
+    return HijriCalendarConfig().getDaysInMonth(year, month);
   }
 
   int _computeFirstDayOffset(int year, int month) {
-    var convertDate = HijriCalendar();
+    var convertDate = HijriCalendarConfig();
     DateTime wkDay = convertDate.hijriToGregorian(year, month, 1);
     // 0-based day of week, with 0 representing Monday.
     final int weekdayFromMonday = wkDay.weekday - 1;
@@ -794,7 +795,7 @@ class HijriDayPicker extends StatelessWidget {
       if (day < 1) {
         labels.add(Container());
       } else {
-        final HijriCalendar dayToBuild = HijriCalendar()
+        final HijriCalendarConfig dayToBuild = HijriCalendarConfig()
           ..hYear = year
           ..hMonth = month
           ..hDay = day;
@@ -927,16 +928,16 @@ class HijriYearPicker extends StatefulWidget {
   /// The currently selected date.
   ///
   /// This date is highlighted in the picker.
-  final HijriCalendar selectedDate;
+  final HijriCalendarConfig selectedDate;
 
   /// Called when the user picks a year.
-  final ValueChanged<HijriCalendar> onChanged;
+  final ValueChanged<HijriCalendarConfig> onChanged;
 
   /// The earliest date the user is permitted to pick.
-  final HijriCalendar firstDate;
+  final HijriCalendarConfig firstDate;
 
   /// The latest date the user is permitted to pick.
-  final HijriCalendar lastDate;
+  final HijriCalendarConfig lastDate;
 
   @override
   _HijriYearPickerState createState() => _HijriYearPickerState();
@@ -977,7 +978,7 @@ class _HijriYearPickerState extends State<HijriYearPicker> {
           key: ValueKey<int>(year),
           onTap: () {
             // year, widget.selectedDate.hMonth, widget.selectedDate.hMonth
-            widget.onChanged(HijriCalendar()
+            widget.onChanged(HijriCalendarConfig()
               ..hYear = year
               ..hMonth = widget.selectedDate.hMonth
               ..hDay = widget.selectedDate.hDay);
@@ -994,25 +995,19 @@ class _HijriYearPickerState extends State<HijriYearPicker> {
   }
 }
 
-Future<HijriCalendar?> showHijriDatePicker({
+Future<HijriCalendarConfig?> showHijriDatePicker({
   required BuildContext context,
-  required HijriCalendar initialDate,
-  required HijriCalendar firstDate,
-  required HijriCalendar lastDate,
+  required HijriCalendarConfig initialDate,
+  required HijriCalendarConfig firstDate,
+  required HijriCalendarConfig lastDate,
   SelectableDayPredicate? selectableDayPredicate,
   DatePickerMode initialDatePickerMode = DatePickerMode.day,
   Locale? locale,
   TextDirection? textDirection,
 }) async {
-  assert(
-      !initialDate.isBefore(firstDate.hYear, firstDate.hMonth, firstDate.hDay),
-      'initialDate must be on or after firstDate');
-  assert(!initialDate.isAfter(lastDate.hYear, lastDate.hMonth, lastDate.hDay),
-      'initialDate must be on or before lastDate');
-  assert(!firstDate.isAfter(lastDate.hYear, lastDate.hMonth, lastDate.hDay),
-      'lastDate must be on or after firstDate');
-  assert(selectableDayPredicate == null || selectableDayPredicate(initialDate),
-      'Provided initialDate must satisfy provided selectableDayPredicate');
+  // Validate date relationships
+  final adjustedInitialDate = _adjustInitialDate(
+      initialDate: initialDate, firstDate: firstDate, lastDate: lastDate);
 
   Widget child = HijriDatePickerDialog(
     initialDate: initialDate,
@@ -1037,8 +1032,28 @@ Future<HijriCalendar?> showHijriDatePicker({
     );
   }
 
-  return showDialog<HijriCalendar>(
+  return showDialog<HijriCalendarConfig>(
     context: context,
     builder: (BuildContext context) => child,
   );
+}
+
+/// Adjusts the initial date if it's outside the valid range
+HijriCalendarConfig _adjustInitialDate({
+  required HijriCalendarConfig initialDate,
+  required HijriCalendarConfig firstDate,
+  required HijriCalendarConfig lastDate,
+}) {
+  // If initialDate is before firstDate, return firstDate
+  if (initialDate.isBefore(firstDate.hYear, firstDate.hMonth, firstDate.hDay)) {
+    return firstDate;
+  }
+
+  // If initialDate is after lastDate, return lastDate
+  if (initialDate.isAfter(lastDate.hYear, lastDate.hMonth, lastDate.hDay)) {
+    return lastDate;
+  }
+
+  // If initialDate is within range, return it as is
+  return initialDate;
 }
