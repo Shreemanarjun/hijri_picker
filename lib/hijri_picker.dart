@@ -11,6 +11,13 @@ import 'package:hijri_calendar/hijri_calendar.dart';
 import 'package:hijri_picker/src/hijri_calendar_builders.dart';
 
 export 'src/hijri_calendar_builders.dart';
+export 'package:hijri_calendar/hijri_calendar.dart';
+export 'package:hijri_calendar/src/hijri_config.dart';
+export 'package:hijri_calendar/src/hijri_calendar_base.dart';
+export 'package:hijri_calendar/src/config/date_functions.dart';
+export 'package:hijri_calendar/src/config/digits_converter.dart';
+export 'package:hijri_calendar/src/config/hijri_adjustment_maps.dart';
+export 'package:hijri_calendar/src/config/hijri_month_week_names.dart';
 
 const double _kMonthPickerPortraitWidth = 330.0;
 const double _kMonthPickerLandscapeWidth = 344.0;
