@@ -80,12 +80,11 @@ packages:
   hijri_calendar:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "16f2cf29f5cbb695e9a37fc15217440c77e8dfde"
-      url: "https://github.com/Shreemanarjun/hijri_calendar"
-    source: git
-    version: "1.0.6+6"
+      name: hijri_calendar
+      sha256: "5b99f8924b738cb7156fff2c679a261cecf4214c324f2529255afb3a9ccfea58"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7+7"
   leak_tracker:
     dependency: transitive
     description:
