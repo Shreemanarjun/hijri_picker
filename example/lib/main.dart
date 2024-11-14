@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               Text(
-                'Hijri: ${selectedDate.fullDate()}',
+                'Hijri: ${selectedDate.toFormat("dd/mm/yyyy")}',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ],
